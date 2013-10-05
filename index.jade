@@ -17,14 +17,17 @@ html(lang='en')
     script(src='/js/script.js')
 
   body
-    .container
-      #intro.visible.intro
+    #intro.visible.intro
 
-        h1 You Can't CoffeeScript Under Pressure
-        button.btn.btn-primary(type='button') Begin
+      h1 You Can't CoffeeScript Under Pressure
+      button.btn.btn-primary(type='button') Begin
 
-      #game
-        .timer
-        pre#editor
-        button#test-code.btn.btn-primary(type='button') Go
-        div#logs
+    #game
+      .timer
+      .inner
+        .editor-container
+          pre#editor
+        .toolbar.clearfix
+          button#test-code.major-btn.btn.btn-primary(type='button') Go
+          div.logs
+            div#logs
