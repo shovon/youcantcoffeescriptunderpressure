@@ -31,6 +31,7 @@ class Game
   constructor: ->
     @_totalTime = 0
     @_interval = null
+    @_currentButton = null
 
     @_editor = ace.edit 'editor'
     @_editor.setTheme 'ace/theme/twilight'
@@ -62,6 +63,12 @@ class Game
         fn 'something.js', 'js'
         fn 'picture.png', 'png'
     ]
+
+    KeyboardJS.on 'command + enter', (->), =>
+      if @_currentButton?
+        @_currentButton.trigger 'click'
+
+    $(window).bind 'keydown', ->
 
   _startTimer: ->
     @_interval = setInterval (=>
@@ -118,6 +125,7 @@ class Game
 
     @_startTimer()
 
+    @_currentButton = @_$testCodeButton
     @_$testCodeButton.click =>
       @_stopTimer()
 
@@ -141,6 +149,7 @@ class Game
       if level.test fn
         @_$testCodeButton.detach()
         @_$nextLevelButton.prependTo $ '#game .toolbar'
+        @_currentButton = @_$nextLevelButton
       else
         @_startTimer()
 
