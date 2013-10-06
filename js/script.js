@@ -121,7 +121,10 @@ Game = (function() {
       }), new Level('getFileExtension', function(fn) {
         fn('something.js', 'js');
         fn('picture.png', 'png');
-        return fn('.htaccess', 'htaccess');
+        fn('.htaccess', 'htaccess');
+        fn('something', false);
+        fn('asdkfl$sdklfjlakf', false);
+        return fn('asdfj,png', false);
       }), new Level('longestString', function(fn) {
         fn(['a', 'ab', 'abc'], 'abc');
         fn(['big', [0, 1, 2, 3, 4], 'tiny'], 'tiny');
@@ -230,7 +233,7 @@ Game = (function() {
   };
 
   Game.prototype._playGame = function(first) {
-    var level,
+    var level, testButtonHandler,
       _this = this;
     if (first == null) {
       first = false;
@@ -254,13 +257,13 @@ Game = (function() {
     })();
     this._startTimer();
     this._currentButton = this._$testCodeButton;
-    return this._$testCodeButton.click(function() {
+    testButtonHandler = function() {
       var bin, f, fn;
       _this._stopTimer();
       bin = CoffeeScript.compile(_this._editor.getValue(), {
         bare: true
       });
-      f = new Function('self', 'test', 'expected', "" + bin + "\nself._log('Testing ' + '\"" + level.file + "(' + test + ');\"');\ntry {\n  var ret = " + level.file + "(test);\n  if (ret !== expected) {\n    throw new Error('WRONG: ' + test + ' is the wrong answer.');\n  }\n  self._log('RIGHT: ' + test + ' is the right answer.', 'green');\n} catch (e) {\n  self._log(e.message, 'red');\n  throw new e;\n}");
+      f = new Function('self', 'test', 'expected', "" + bin + "\nself._log('Testing ' + '\"" + level.file + "(' + test + ');\"');\ntry {\n  var ret = " + level.file + "(test);\n  if (ret !== expected) {\n    throw new Error('WRONG: ' + ret + ' is the wrong answer.');\n  }\n  self._log('RIGHT: ' + ret + ' is the right answer.', 'green');\n} catch (e) {\n  self._log(e.message, 'red');\n  throw new e;\n}");
       fn = function(a, b) {
         return f(_this, a, b);
       };
@@ -272,9 +275,11 @@ Game = (function() {
           return _this._log("You can hit Ctrl + Enter or Cmd + Enter to move to the next " + "level", 'green');
         }
       } else {
+        _this._$testCodeButton.one('click', testButtonHandler);
         return _this._startTimer();
       }
-    });
+    };
+    return this._$testCodeButton.one('click', testButtonHandler);
   };
 
   return Game;
