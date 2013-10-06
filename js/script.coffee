@@ -108,8 +108,8 @@ class Game
     @_editor.setValue level.source
     @_editor.selection.clearSelection()
     @_editor.focus()
-    ((lines, lineCount, lastLine) ->
-      lines = @_editor.getValue().split('\n').length
+    ((lines, lineCount, lastLine) =>
+      lines = @_editor.session.getValue().split '\n'
       lineCount = lines.length
       lastLineLength = lines.pop().length
 
