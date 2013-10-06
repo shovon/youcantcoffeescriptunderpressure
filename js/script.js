@@ -34,7 +34,7 @@ Level = (function() {
 
     var dfd,
       _this = this;
-    dfd = $.ajax("/js/templates/" + this.file + ".txt");
+    dfd = $.ajax("js/templates/" + this.file + ".txt");
     return dfd.done(function(body) {
       return _this.source = body;
     });
