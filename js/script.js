@@ -113,18 +113,34 @@ Game = (function() {
         fn(10, 20);
         fn(20, 40);
         return fn(-10, -20);
+      }), new Level('isNumberEven', function(fn) {
+        fn(10, true);
+        fn(20, true);
+        fn(5, false);
+        return fn(3, false);
+      }), new Level('getFileExtension', function(fn) {
+        fn('something.js', 'js');
+        fn('picture.png', 'png');
+        return fn('.htaccess', 'htaccess');
+      }), new Level('longestString', function(fn) {
+        fn(['a', 'ab', 'abc'], 'abc');
+        fn(['big', [0, 1, 2, 3, 4], 'tiny'], 'tiny');
+        fn(['Hi', 'World', '你好'], 'World');
+        fn([true, false, 'lol'], 'lol');
+        return fn([
+          {
+            object: true,
+            mainly: 'to confuse you'
+          }, 'x'
+        ], 'x');
+      }), new Level('arraySum', function(fn) {
+        fn([1, 2, 3, 4, 5], 15);
+        fn([[1, 2, 3], 4, 5], 15);
+        fn([[1, 2, false], '4', '5'], 3);
+        fn([[[[[[[[[1]]]]]]]], 1], 2);
+        return fn([['A', 'B', 'C', 'easy as', 1, 2, 3]], 6);
       })
     ];
-    new Level('isNumberEven', function(fn) {
-      fn(10, true);
-      fn(20, true);
-      fn(5, false);
-      return fn(3, false);
-    });
-    new Level('getFileExtension', function(fn) {
-      fn('something.js', 'js');
-      return fn('picture.png', 'png');
-    });
     KeyboardJS.on('command + enter', (function() {}), function() {
       if (_this._currentButton != null) {
         return _this._currentButton.trigger('click');
