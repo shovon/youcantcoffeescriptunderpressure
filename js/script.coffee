@@ -87,7 +87,7 @@ class Game
       @_clearLog()
       @_$nextLevelButton.detach()
       @_$testCodeButton.prependTo $ '#game .toolbar'
-      @playGame()
+      @_playGame()
     @_$logs = $ '#logs'
 
     @_$outro = $ '#outro'
@@ -151,7 +151,7 @@ class Game
 
   _log: (message, color='white') ->
     style = switch color
-      when 'green' then 'background-color: green'
+      when 'green' then 'background-color: rgba(0, 255, 0, 0.25)'
       when 'red' then 'background-color: red; color: white'
       else 'background-color: white'
     @_$logs.html @_$logs.html() + "<div style='#{style}'>#{message}</div.>"
@@ -181,6 +181,10 @@ class Game
       @_tweetProgress()
 
   playGame: ->
+    @_log 'You can hit Ctrl + Enter or Cmd + Enter to test your code', 'green'
+    @_playGame true
+
+  _playGame: (first=false)->
     level = @_levels.shift()
 
     return @_closeGame() unless level
@@ -227,6 +231,11 @@ class Game
         @_$testCodeButton.detach()
         @_$nextLevelButton.prependTo $ '#game .toolbar'
         @_currentButton = @_$nextLevelButton
+        if first
+          @_log(
+            "You can hit Ctrl + Enter or Cmd + Enter to move to the next " +
+            "level"
+          , 'green')
       else
         @_startTimer()
 
