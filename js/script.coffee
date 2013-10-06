@@ -67,7 +67,6 @@ toHumanReadable = (seconds) ->
   else
     return 'no time'
 
-
 class Game
   constructor: ->
     @_totalTime = 0
@@ -106,6 +105,9 @@ class Game
         fn 'something.js', 'js'
         fn 'picture.png', 'png'
         fn '.htaccess', 'htaccess'
+        fn 'something', false
+        fn 'asdkfl$sdklfjlakf', false
+        fn 'asdfj,png', false
       new Level 'longestString', (fn) ->
         fn ['a','ab','abc'], 'abc'
         fn ['big',[0,1,2,3,4],'tiny'], 'tiny'
@@ -203,7 +205,8 @@ class Game
     @_startTimer()
 
     @_currentButton = @_$testCodeButton
-    @_$testCodeButton.click =>
+
+    testButtonHandler = =>
       @_stopTimer()
 
       bin = CoffeeScript.compile @_editor.getValue(), bare: true
@@ -215,9 +218,9 @@ class Game
         try {
           var ret = #{level.file}(test);
           if (ret !== expected) {
-            throw new Error('WRONG: ' + test + ' is the wrong answer.');
+            throw new Error('WRONG: ' + ret + ' is the wrong answer.');
           }
-          self._log('RIGHT: ' + test + ' is the right answer.', 'green');
+          self._log('RIGHT: ' + ret + ' is the right answer.', 'green');
         } catch (e) {
           self._log(e.message, 'red');
           throw new e;
@@ -237,7 +240,10 @@ class Game
             "level"
           , 'green')
       else
+        @_$testCodeButton.one 'click', testButtonHandler
         @_startTimer()
+
+    @_$testCodeButton.one 'click', testButtonHandler
 
 $ ->
 
