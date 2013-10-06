@@ -107,10 +107,13 @@ class Game
 
     return def
 
+  closeGame: ->
+    @_$game.remove()
+
   playGame: ->
     level = @_levels.shift()
 
-    return alert 'Done!' unless level
+    return @closeGame() unless level
 
     @_editor.setValue level.source
     @_editor.selection.clearSelection()
