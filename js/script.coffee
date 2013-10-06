@@ -135,12 +135,16 @@ class Game
       f = new Function 'self', 'test', 'expected', """
         #{bin}
         self._log('Testing ' + '"#{level.file}(' + test + ');"');
-        var ret = #{level.file}(test);
-        if (ret !== expected) {
-          self._log('WRONG: ' + test + ' is the wrong answer.', 'red');
-          throw new Error('Expected ' + expected);
+        try {
+          var ret = #{level.file}(test);
+          if (ret !== expected) {
+            throw new Error('WRONG: ' + test + ' is the wrong answer.');
+          }
+          self._log('RIGHT: ' + test + ' is the right answer.', 'green');
+        } catch (e) {
+          self._log(e.message, 'red');
+          throw new e;
         }
-        self._log('RIGHT: ' + test + ' is the right answer.', 'green');
       """
 
       fn = (a, b) =>
