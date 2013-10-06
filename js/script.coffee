@@ -23,7 +23,7 @@ class Level
     This is an asynchronous function, and hence, returns a Deferred object.
     ### 
 
-    dfd = $.ajax "/js/templates/#{@file}.txt"
+    dfd = $.ajax "js/templates/#{@file}.txt"
     dfd.done (body) =>
       @source = body
 
