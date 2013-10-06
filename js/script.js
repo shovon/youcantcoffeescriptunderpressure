@@ -104,7 +104,7 @@ Game = (function() {
       _this._clearLog();
       _this._$nextLevelButton.detach();
       _this._$testCodeButton.prependTo($('#game .toolbar'));
-      return _this.playGame();
+      return _this._playGame();
     });
     this._$logs = $('#logs');
     this._$outro = $('#outro');
@@ -182,7 +182,7 @@ Game = (function() {
     style = (function() {
       switch (color) {
         case 'green':
-          return 'background-color: green';
+          return 'background-color: rgba(0, 255, 0, 0.25)';
         case 'red':
           return 'background-color: red; color: white';
         default:
@@ -225,8 +225,16 @@ Game = (function() {
   };
 
   Game.prototype.playGame = function() {
+    this._log('You can hit Ctrl + Enter or Cmd + Enter to test your code', 'green');
+    return this._playGame(true);
+  };
+
+  Game.prototype._playGame = function(first) {
     var level,
       _this = this;
+    if (first == null) {
+      first = false;
+    }
     level = this._levels.shift();
     if (!level) {
       return this._closeGame();
@@ -259,7 +267,10 @@ Game = (function() {
       if (level.test(fn)) {
         _this._$testCodeButton.detach();
         _this._$nextLevelButton.prependTo($('#game .toolbar'));
-        return _this._currentButton = _this._$nextLevelButton;
+        _this._currentButton = _this._$nextLevelButton;
+        if (first) {
+          return _this._log("You can hit Ctrl + Enter or Cmd + Enter to move to the next " + "level", 'green');
+        }
       } else {
         return _this._startTimer();
       }
