@@ -97,15 +97,28 @@ class Game
         fn 10, 20
         fn 20, 40
         fn -10, -20
+      new Level 'isNumberEven', (fn) ->
+        fn 10, true
+        fn 20, true
+        fn 5, false
+        fn 3, false
+      new Level 'getFileExtension', (fn) ->
+        fn 'something.js', 'js'
+        fn 'picture.png', 'png'
+        fn '.htaccess', 'htaccess'
+      new Level 'longestString', (fn) ->
+        fn ['a','ab','abc'], 'abc'
+        fn ['big',[0,1,2,3,4],'tiny'], 'tiny'
+        fn ['Hi','World','你好'], 'World'
+        fn [true, false, 'lol'], 'lol'
+        fn [{object: true,mainly: 'to confuse you'},'x'], 'x'
+      new Level 'arraySum', (fn) ->
+        fn [1,2,3,4,5], 15
+        fn [[1,2,3],4,5], 15
+        fn [[1,2,false],'4','5'], 3
+        fn [[[[[[[[[1]]]]]]]], 1], 2
+        fn [['A','B','C','easy as',1,2,3]], 6
     ]
-    new Level 'isNumberEven', (fn) ->
-      fn 10, true
-      fn 20, true
-      fn 5, false
-      fn 3, false
-    new Level 'getFileExtension', (fn) ->
-      fn 'something.js', 'js'
-      fn 'picture.png', 'png'
 
     KeyboardJS.on 'command + enter', (->), =>
       if @_currentButton?
