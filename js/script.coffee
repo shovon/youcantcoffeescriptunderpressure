@@ -27,6 +27,46 @@ class Level
     dfd.done (body) =>
       @source = body
 
+splitTime = (seconds) ->
+  minutes = Math.floor seconds / 60
+
+  return {
+    minutes: minutes
+    seconds: seconds - minutes * 60
+  }
+
+tommss = (seconds) ->
+  { minutes, seconds } = splitTime seconds
+
+  minutes = if minutes < 10 then "0#{minutes}" else minutes.toString()
+  seconds = if seconds < 10 then "0#{seconds}" else seconds.toString()
+
+  return "#{minutes}:#{seconds}"
+
+toHumanReadable = (seconds) ->
+  { minutes, seconds } = splitTime seconds
+
+  if minutes > 1
+    minutes = "#{minutes} minutes"
+  else if minutes is 1
+    minutes = "#{minutes} minute"
+  else
+    minutes = ""
+
+  if seconds > 1
+    seconds = "#{seconds} seconds"
+  else if seconds is 1
+    seconds = "#{seconds} second"
+  else
+    seconds = ""
+
+  if minutes && seconds
+    return [minutes, seconds].join ' and '
+  else if minutes or seconds
+    return minutes or seconds
+  else
+    return 'no time'
+
 class Game
   constructor: ->
     @_totalTime = 0
@@ -49,20 +89,22 @@ class Game
       @playGame()
     @_$logs = $ '#logs'
 
+    @_$outro = $ '#outro'
+
     @_levels = [
       new Level 'doubleInteger', (fn) ->
         fn 10, 20
         fn 20, 40
         fn -10, -20
-      new Level 'isNumberEven', (fn) ->
-        fn 10, true
-        fn 20, true
-        fn 5, false
-        fn 3, false
-      new Level 'getFileExtension', (fn) ->
-        fn 'something.js', 'js'
-        fn 'picture.png', 'png'
     ]
+    new Level 'isNumberEven', (fn) ->
+      fn 10, true
+      fn 20, true
+      fn 5, false
+      fn 3, false
+    new Level 'getFileExtension', (fn) ->
+      fn 'something.js', 'js'
+      fn 'picture.png', 'png'
 
     KeyboardJS.on 'command + enter', (->), =>
       if @_currentButton?
@@ -73,7 +115,7 @@ class Game
   _startTimer: ->
     @_interval = setInterval (=>
       @_totalTime += 1
-      @_$game.find('.timer').html @_totalTime
+      @_$game.find('.timer').html tommss @_totalTime
     ), 1000
 
   _stopTimer: ->
@@ -109,6 +151,8 @@ class Game
 
   closeGame: ->
     @_$game.remove()
+    @_$outro.addClass 'visible'
+    @_$outro.find('h1').html "You finished in #{toHumanReadable @_totalTime}"
 
   playGame: ->
     level = @_levels.shift()
