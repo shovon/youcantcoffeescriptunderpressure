@@ -67,6 +67,7 @@ toHumanReadable = (seconds) ->
   else
     return 'no time'
 
+
 class Game
   constructor: ->
     @_totalTime = 0
@@ -112,6 +113,16 @@ class Game
 
     $(window).bind 'keydown', ->
 
+  _tweetProgress: ->
+    tweetUrl = "https://twitter.com/intent/tweet?related=shovnr&text="
+    tweetUrl += encodeURIComponent(
+      "I finished \"You can't CoffeeScript Under Pressure\" in " +
+      "#{toHumanReadable @_totalTime}. You think you can do better?"
+    )
+    tweetUrl += "&url=#{window.location.href}"
+
+    window.open tweetUrl, '_blank'
+
   _startTimer: ->
     @_interval = setInterval (=>
       @_totalTime += 1
@@ -149,15 +160,17 @@ class Game
 
     return def
 
-  closeGame: ->
+  _closeGame: ->
     @_$game.remove()
     @_$outro.addClass 'visible'
     @_$outro.find('h1').html "You finished in #{toHumanReadable @_totalTime}"
+    $('#tweet-progress').click =>
+      @_tweetProgress()
 
   playGame: ->
     level = @_levels.shift()
 
-    return @closeGame() unless level
+    return @_closeGame() unless level
 
     @_editor.setValue level.source
     @_editor.selection.clearSelection()
