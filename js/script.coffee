@@ -35,6 +35,14 @@ splitTime = (seconds) ->
     seconds: seconds - minutes * 60
   }
 
+jsEscape = (content) ->
+  return content.replace(/(['\\])/g, '\\$1')
+      .replace(/[\f]/g, "\\f")
+      .replace(/[\b]/g, "\\b")
+      .replace(/[\n]/g, "\\n")
+      .replace(/[\t]/g, "\\t")
+      .replace(/[\r]/g, "\\r")
+
 tommss = (seconds) ->
   { minutes, seconds } = splitTime seconds
 
@@ -209,7 +217,14 @@ class Game
     testButtonHandler = =>
       @_stopTimer()
 
-      bin = CoffeeScript.compile @_editor.getValue(), bare: true
+      try
+        bin = CoffeeScript.compile @_editor.getValue(), bare: true
+      catch e
+        tmp = JSON.stringify(message: e.message).split(':')[1]
+        tmp = tmp.slice 0, tmp.length - 1
+        bin =
+          "var #{level.file} = " +
+          (-> throw new Error $).toString().replace '$', tmp
 
       # The function that will be running our test.
       f = new Function 'self', 'test', 'expected', """
