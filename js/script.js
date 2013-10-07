@@ -1,4 +1,4 @@
-var Game, Level, splitTime, toHumanReadable, tommss;
+var Game, Level, jsEscape, splitTime, toHumanReadable, tommss;
 
 Level = (function() {
   /* Represents a single level*/
@@ -51,6 +51,10 @@ splitTime = function(seconds) {
     minutes: minutes,
     seconds: seconds - minutes * 60
   };
+};
+
+jsEscape = function(content) {
+  return content.replace(/(['\\])/g, '\\$1').replace(/[\f]/g, "\\f").replace(/[\b]/g, "\\b").replace(/[\n]/g, "\\n").replace(/[\t]/g, "\\t").replace(/[\r]/g, "\\r");
 };
 
 tommss = function(seconds) {
@@ -258,11 +262,22 @@ Game = (function() {
     this._startTimer();
     this._currentButton = this._$testCodeButton;
     testButtonHandler = function() {
-      var bin, f, fn;
+      var bin, e, f, fn, tmp;
       _this._stopTimer();
-      bin = CoffeeScript.compile(_this._editor.getValue(), {
-        bare: true
-      });
+      try {
+        bin = CoffeeScript.compile(_this._editor.getValue(), {
+          bare: true
+        });
+      } catch (_error) {
+        e = _error;
+        tmp = JSON.stringify({
+          message: e.message
+        }).split(':')[1];
+        tmp = tmp.slice(0, tmp.length - 1);
+        bin = ("var " + level.file + " = ") + (function() {
+          throw new Error($);
+        }).toString().replace('$', tmp);
+      }
       f = new Function('self', 'test', 'expected', "" + bin + "\nself._log('Testing ' + '\"" + level.file + "(' + test + ');\"');\ntry {\n  var ret = " + level.file + "(test);\n  if (ret !== expected) {\n    throw new Error('WRONG: ' + ret + ' is the wrong answer.');\n  }\n  self._log('RIGHT: ' + ret + ' is the right answer.', 'green');\n} catch (e) {\n  self._log(e.message, 'red');\n  throw new e;\n}");
       fn = function(a, b) {
         return f(_this, a, b);
