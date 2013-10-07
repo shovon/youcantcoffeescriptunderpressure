@@ -94,6 +94,14 @@ toHumanReadable = function(seconds) {
 Game = (function() {
   function Game() {
     var _this = this;
+    $(document).keypress(function(event) {
+      if (event.which === 13 && (event.metaKey || event.ctrlKey)) {
+        if (_this._currentButton != null) {
+          event.preventDefault();
+          return _this._currentButton.trigger('click');
+        }
+      }
+    });
     this._totalTime = 0;
     this._interval = null;
     this._currentButton = null;
@@ -148,12 +156,6 @@ Game = (function() {
         return fn([['A', 'B', 'C', 'easy as', 1, 2, 3]], 6);
       })
     ];
-    KeyboardJS.on('command + enter', (function() {}), function() {
-      if (_this._currentButton != null) {
-        return _this._currentButton.trigger('click');
-      }
-    });
-    $(window).bind('keydown', function() {});
   }
 
   Game.prototype._tweetProgress = function() {
@@ -301,7 +303,7 @@ Game = (function() {
 
 })();
 
-$(function() {
+$('document').ready(function() {
   var $game, $intro, $logs, $startButton, def, game, totalTime;
   game = new Game();
   def = game.download();
