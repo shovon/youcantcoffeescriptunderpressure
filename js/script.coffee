@@ -77,6 +77,12 @@ toHumanReadable = (seconds) ->
 
 class Game
   constructor: ->
+    $(document).keypress (event) =>
+      if event.which is 13 and (event.metaKey or event.ctrlKey)
+        if @_currentButton?
+          event.preventDefault()
+          @_currentButton.trigger 'click'
+
     @_totalTime = 0
     @_interval = null
     @_currentButton = null
@@ -129,12 +135,6 @@ class Game
         fn [[[[[[[[[1]]]]]]]], 1], 2
         fn [['A','B','C','easy as',1,2,3]], 6
     ]
-
-    KeyboardJS.on 'command + enter', (->), =>
-      if @_currentButton?
-        @_currentButton.trigger 'click'
-
-    $(window).bind 'keydown', ->
 
   _tweetProgress: ->
     tweetUrl = "https://twitter.com/intent/tweet?related=shovnr&text="
@@ -260,7 +260,7 @@ class Game
 
     @_$testCodeButton.one 'click', testButtonHandler
 
-$ ->
+$('document').ready ->
 
   # Used for notifying when all the assets have finished downloading.
   game = new Game()
